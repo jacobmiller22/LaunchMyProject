@@ -1,0 +1,22 @@
+[
+  {
+    "title": "PortalApp",
+    "description": "TBD",
+    "os": {
+      "windows": {
+        "path": "C:\\Users\\jacob\\Documents\\Projects\\PortalApp",
+        "editor": "vscode",
+        "scripts": {
+          "cmds": ["npm run dev"],
+          "bash-scripts": []
+        }
+      },
+      "macOS": {
+  
+      },
+      "linux": {
+  
+      }
+    }
+  }
+]
