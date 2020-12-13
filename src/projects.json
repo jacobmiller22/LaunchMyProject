@@ -5,18 +5,35 @@
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\Projects\\PortalApp",
-        "editor": "vscode",
+        "editor-cmd": "code .",
         "scripts": {
           "cmds": ["npm run dev"],
           "bash-scripts": []
         }
       },
       "macOS": {
-  
+        "path": "/Users/jacobmiller/Documents/Projects/ClientPortalApp",
+        "editor": "code .",
+        "scripts": {
+          "cmds": [
+            "cd /Users/jacobmiller/Documents/Projects/ClientPortalApp/server && npm run dev"
+          ],
+          "bash-scripts": []
+        }
       },
-      "linux": {
-  
-      }
+      "linux": {}
     }
+  },
+  {
+    "title": "Portfolio"
+  },
+  {
+    "title": "StartMyProject"
+  },
+  {
+    "title": "VTH-Live-Site"
+  },
+  {
+    "title": "VTH-www"
   }
 ]
