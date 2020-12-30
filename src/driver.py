@@ -5,7 +5,10 @@ import json
 import subprocess
 import sys
 import platform
-import applescript
+try:
+    import applescript
+except ImportError:
+    print("applescript not found. Skipping module")
 from tkinter  import *
 
 
