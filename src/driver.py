@@ -110,13 +110,11 @@ subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 # Open cmd/terminal
-print(openTerminal)
-print("???")
 os.system(openTerminal)
 
 ## Execute any scripts
 cmds = selected["os"][plat]["scripts"]["cmds"]
-print(plat)
+
 if plat == "Darwin":
     # We are on MacOS
     for cmd in cmds:
@@ -124,13 +122,12 @@ if plat == "Darwin":
         applescript.tell.app( 'Terminal', 'do script "' + script + '"') 
 elif plat == "windows":
     # We are on Windows
-    print(path)
     for cmd in cmds:
         # subprocess.Popen(args='{}'.format(cmd), cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # subprocess.Popen(args='dir', cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # os.system('cmd /k "cd {} && {}"'.format(path, cmd))
-        print("-")
-        os.system('start cmd.exe /k "cd {} && {}"'.format(path, cmd))
+        driveLetter = path[:2]
+        os.system('{} start cmd.exe /k "cd {} && {}"'.format(driveLetter, path, cmd))
 
 elif plat == "Linux":
     # We are on Linux
