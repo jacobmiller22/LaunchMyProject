@@ -1,0 +1,30 @@
+[{
+  "title": "",
+  "description": "TBD",
+  "os": {
+    "windows": {
+      "path": "",
+      "editor-cmd": "",
+      "scripts": {
+        "cmds": [],
+        "bash-scripts": []
+      }
+    },
+    "macOS": {
+      "path": "",
+      "editor-cmd": "",
+      "scripts": {
+        "cmds": [],
+        "bash-scripts": []
+      }
+    },
+    "linux": {
+      "path": "",
+      "editor-cmd": "",
+      "scripts": {
+        "cmds": [],
+        "bash-scripts": []
+      }
+    }
+  }
+}]
