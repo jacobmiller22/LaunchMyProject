@@ -12,32 +12,51 @@ except ImportError:
 from tkinter  import *
 
 
-# Load project data
-
+## OPEN PROJECT DATA FILE
 absPath = os.path.dirname(os.path.abspath(__file__))
-
 with open("{}/projects.json".format(absPath)) as f:
     projects = json.load(f)
 
+## CREATE GUI
+
 def sel():
-   selection = "You selected the option " + str(var.get())
-   label.config(text = selection)
+    btn_launch.config(text="Launch "+str(var.get()))
 
 def getSel():
     return str(var.get())
 
-root = Tk()
-var = StringVar()
+def setSel(newVar):
+    var.set(newVar)
 
+root = Tk() # Create Window
+root.title("StartMyProject")
+root.rowconfigure(0, minsize=250, weight=1)
+root.columnconfigure(0, minsize=250, weight=1)
+
+frm_projects = Frame(master=root) # Creates a frame for our project options
+lbl_projects = Label(master=frm_projects, text="Projects")
+lbl_projects.pack(side=TOP)
+var = StringVar()
 for project in projects:
     title = project["title"]
-    radio = Radiobutton(root, text=title, variable=var, value=title, command=sel)
+    radio = Radiobutton(master=frm_projects, text=title, variable=var, value=title, command=sel)
     radio.pack( anchor = W)
 
+# Selects the first project in the list
+if(len(projects)>0):
+    setSel(projects[0]["title"])
 
-label = Label(root)
-label.pack()
-root.mainloop()
+frm_projects.grid(row=0,column=0,padx=5,pady=5)
+
+def launch():
+    root.destroy()
+
+frm_launch = Frame(master=root) # Create a frame for launch
+btn_launch = Button(master=frm_launch,text="Launch {}".format(getSel()),fg="blue", command=launch)
+btn_launch.pack(side=BOTTOM)
+frm_launch.grid(row=1,column=0,padx=5,pady=5)
+
+root.mainloop() # Create the GUI
 
 print("----------------------------------------")
 # Load selected project data
@@ -48,6 +67,8 @@ def selectProject():
             return project
 
 selected = selectProject()
+if(selected == None):
+    sys.exit("No project was selected. Exiting")
 title = selected["title"]
 plat = platform.system()
 global path
@@ -55,13 +76,12 @@ global editor
 global fileSys
 global openTerminal
 
-
 if plat == "Darwin":
     # We are on MacOS
     print("Using MacOS")
     plat = "macOS"
     path = selected["os"][plat]["path"]
-    editor = selected["os"][plat]["editor"]
+    editor = selected["os"][plat]["editor-cmd"]
     fileSys = "finder"
     openTerminal = "open {}".format(path)
 elif plat == "Windows":
@@ -69,7 +89,7 @@ elif plat == "Windows":
     print("Using Windows")
     plat = "windows"
     path = selected["os"][plat]["path"]
-    editor = selected["os"]["windows"]["editor"]
+    editor = selected["os"]["windows"]["editor-cmd"]
     fileSys = "explorer"
     openTerminal = "start cmd & cd {}".format(path)
 elif plat == "Linux":
@@ -78,7 +98,6 @@ elif plat == "Linux":
     plat = "linux"
 else:
     sys.exit("Unknown OS, please report")
-
 
 print("Loading {}\nFrom: $> {}\n".format(title, path))
 
@@ -93,14 +112,24 @@ subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
 # Open cmd/terminal
 os.system(openTerminal)
 
-## Execute any commands
-# mac
-script = selected["os"][plat]["scripts"]["cmds"][0]
-applescript.tell.app( 'Terminal', 'do script "' + script + '"') 
+## Execute any scripts
+cmds = selected["os"][plat]["scripts"]["cmds"]
+if plat == "Darwin":
+    # We are on MacOS
+    for cmd in cmds:
+        script = "cd {} && {}".format(path, cmd)
+        applescript.tell.app( 'Terminal', 'do script "' + script + '"') 
+elif plat == "Windows":
+    # We are on Windows
+    for cmd in cmds:
+        subprocess.Popen(args='{}'.format(cmd), cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+elif plat == "Linux":
+    # We are on Linux
+    print("Run commands on Linux not yet supported")
+else:
+    sys.exit("Unknown OS, please report")
 
-
-
-# Maybe have an ascii image here?
+# Finished. Print Ascii Art
 asciiArt = ".  .            .  .      .         \n|__| _.._ ._   .|__| _. _.;_/*._  _ \n|  |(_][_)[_)\_||  |(_](_.| \|[ )(_]\n       |  |  ._|                 ._|\n"
 print(asciiArt)
 print("Project {}, has started. Happy Hacking".format(title))
