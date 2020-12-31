@@ -57,7 +57,7 @@
     "description": "TBD",
     "os": {
       "windows": {
-        "path": "",
+        "path": "C:\\Users\\jacob\\Documents\\Projects\\StartMyProject",
         "editor-cmd": "code .",
         "scripts": {
           "cmds": [""],
@@ -87,10 +87,10 @@
     "description": "TBD",
     "os": {
       "windows": {
-        "path": "",
+        "path": "C:\\Users\\jacob\\Documents\\VTHacks\\Live-Site",
         "editor-cmd": "code .",
         "scripts": {
-          "cmds": [""],
+          "cmds": ["npm start"],
           "bash-scripts": []
         }
       },
