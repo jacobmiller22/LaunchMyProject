@@ -127,7 +127,7 @@ elif plat == "windows":
         # subprocess.Popen(args='dir', cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # os.system('cmd /k "cd {} && {}"'.format(path, cmd))
         driveLetter = path[:2]
-        os.system('start cmd.exe /k "cd {} && {}"'.format( path, cmd))
+        os.system('start cmd.exe /k "{} && cd {} && {}"'.format(path[:2], path, cmd))
 
 elif plat == "Linux":
     # We are on Linux
