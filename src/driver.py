@@ -91,7 +91,7 @@ elif plat == "Windows":
     path = selected["os"][plat]["path"]
     editor = selected["os"]["windows"]["editor-cmd"]
     fileSys = "explorer"
-    openTerminal = 'start cmd.exe /k "cd {}"'.format(path)
+    openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
 elif plat == "Linux":
     # We are on Linux
     print("Using Linux")
