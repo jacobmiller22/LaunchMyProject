@@ -91,13 +91,13 @@ elif plat == "Windows":
     path = selected["os"][plat]["path"]
     editor = selected["os"]["windows"]["editor-cmd"]
     fileSys = "explorer"
-    openTerminal = "start cmd & cd {}".format(path)
+    openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
 elif plat == "Linux":
     # We are on Linux
     print("Using Linux")
     plat = "linux"
 else:
-    sys.exit("Unknown OS, please report")
+    sys.exit("Unknown OS, please report. 0-0")
 
 print("Loading {}\nFrom: $> {}\n".format(title, path))
 
@@ -119,15 +119,20 @@ if plat == "macOS":
     for cmd in cmds:
         script = "cd {} && {}".format(path, cmd)
         applescript.tell.app( 'Terminal', 'do script "' + script + '"') 
-elif plat == "Windows":
+elif plat == "windows":
     # We are on Windows
     for cmd in cmds:
-        subprocess.Popen(args='{}'.format(cmd), cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # subprocess.Popen(args='{}'.format(cmd), cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # subprocess.Popen(args='dir', cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # os.system('cmd /k "cd {} && {}"'.format(path, cmd))
+        driveLetter = path[:2]
+        os.system('start cmd.exe /k "{} && cd {} && {}"'.format(path[:2], path, cmd))
+
 elif plat == "Linux":
     # We are on Linux
     print("Run commands on Linux not yet supported")
 else:
-    sys.exit("Unknown OS, please report")
+    sys.exit("Unknown OS, please report. 0-1")
 
 # Finished. Print Ascii Art
 asciiArt = ".  .            .  .      .         \n|__| _.._ ._   .|__| _. _.;_/*._  _ \n|  |(_][_)[_)\_||  |(_](_.| \|[ )(_]\n       |  |  ._|                 ._|\n"

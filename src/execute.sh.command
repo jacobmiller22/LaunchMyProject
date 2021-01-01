@@ -15,6 +15,10 @@ case $OS in
         echo "Executing on Windows. Version: $OS"
         py ./driver.py
         ;;
+    'MINGW64_NT-10.0-19042')
+        echo "Executing on Windows. Version: $OS"
+        py ./driver.py
+        ;;
     'Darwin') 
         echo "Executing on MacOS. Version: $OS"
         realpath() {
