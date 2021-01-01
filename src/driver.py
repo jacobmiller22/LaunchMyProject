@@ -111,10 +111,10 @@ subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
 
 # Open cmd/terminal
 os.system(openTerminal)
-
+print(plat)
 ## Execute any scripts
 cmds = selected["os"][plat]["scripts"]["cmds"]
-if plat == "Darwin":
+if plat == "macOS":
     # We are on MacOS
     for cmd in cmds:
         script = "cd {} && {}".format(path, cmd)
