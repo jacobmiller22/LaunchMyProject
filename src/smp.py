@@ -20,19 +20,7 @@ def selectProject(title: str):
         if project["title"] == title:
             return project
 
-# @click.command()
-# def cli():
-#   click.echo("STARTING THE CLI")
 
-# @click.command()
-# @click.option("--lim", default=10, help="Project displ~!ay limit")
-# def li(lim):
-#     for i in range(len(projects)):
-#         if(i < lim):
-#             print(projects[i]["title"])
-
-# if __name__ == '__main__':
-#     li()
 
 
 @click.group()
@@ -66,9 +54,6 @@ def start(project_title: str):
     }
     
     driver.start(driver.parseArg(args))
-    # print(pathlib.Path().absolute())
-    # p = subprocess.Popen('driver.py {}'.format(args),cwd=pathlib.Path().absolute(), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    # p.wait()
 
 
 @smp.group()
