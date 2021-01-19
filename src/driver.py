@@ -5,7 +5,7 @@ import json
 import subprocess
 import sys
 import platform
-try:
+try: 
     import applescript
 except ImportError:
     print("applescript not found. Skipping module")
