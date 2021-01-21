@@ -2,3 +2,7 @@
 ./src/projects.json
 Lib
 Scripts
+build
+dist
+__pycache__
+smp.egg-info
