@@ -52,7 +52,7 @@ def parseArg(args: dict):
 def write_to_projects(projects: [dict]):
     absPath = os.path.dirname(os.path.abspath(__file__))
     with open("{}/projects.json".format(absPath), "w") as outfile:
-        json.dump(res, outfile)
+        json.dump(projects, outfile)
 
 
 def start(selected: dict):
