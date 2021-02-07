@@ -2,10 +2,12 @@
 
 
 import os
+import errno
 import json
 import subprocess
 import sys
 import platform
+import signal
 try:
     import applescript
 except ImportError:
@@ -17,7 +19,7 @@ except ImportError:
 #     "payload": {
 #         "project": {
 #             "title": "My project title",
-#             "description": "tbd",
+#             "summary": "tbd",
 #             "os": {
 #                 "windows": {
 #                     "path": "C:\\Users\\jacob\\Documents\\Projects\\StartMyProject",
@@ -42,12 +44,91 @@ def parseArg(args: dict):
     elif(action == "REMOVE"):
         return args["payload"]
     elif(action == "EDIT"):
-        print("Edit Project")
+        return args["payload"]
     elif(action == "START"):
-        return args["payload"]["project"]
+        return args["payload"]
 
     print("Parsing arguments")
 
+def determinePlatform():
+    plat = platform.system()
+    if plat == "Darwin":
+        return "macOS"
+    elif plat == "Windows":
+        return "windows"
+    elif plat == "Linux":
+        return "linux"
+    else:
+        sys.exit("Unknown OS, please report. 0-0")
+
+def create_commands():
+    """Create commands"""
+
+def __exit(message: str):
+    sys.exit(message)
+
+def edit_project(project: dict, field: str):
+    project_to_add = project
+    os = determinePlatform()
+    
+    if(project_to_add[field] != None):
+        
+        if(field == "title"):
+            newVal = input("Enter new title. ")
+            project_to_add['title'] = newVal
+        elif(field == "summary"):
+            newVal = input("Enter new summary. ")
+            project_to_add['summary'] = newVal
+        elif(project_to_add["os"][os][field] != None):
+            project_to_add["os"][field] == os
+
+            if(field == "path"):
+                newVal = input("new path")
+                project_to_add["os"][os]["path"] = newVal
+            elif(field == "editor-cmd"):
+                newVal = input("New editor cmd")
+                project_to_add["os"][os]["editor-cmd"] = newVal
+
+            elif(project_to_add["os"][os]["scripts"][field] != None):
+                if(field == "cmds"):
+                    newVal = input("Enter new cmd")
+                    project_to_add["os"][os]["scripts"]["cmds"] = newVal
+                elif(field == "cmds"):
+                    newVal = input("Enter new cmd")
+                    project_to_add["os"][os]["scripts"]["cmds"] = newVal
+                else:
+                    __exit("Invalid field")
+
+    return project_to_add
+
+   
+def is_pathname_valid(pathname: str) -> bool:
+    ERROR_INVALID_NAME = 123
+    try:
+        if not isinstance(pathname, str) or not pathname:
+            return False
+        _, pathname = os.path.splitdrive(pathname)
+
+        root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
+            if sys.platform == 'win32' else os.path.sep
+        assert os.path.isdir(root_dirname)   # ...Murphy and her ironclad Law
+
+        root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
+
+        for pathname_part in pathname.split(os.path.sep):
+            try:
+                os.lstat(root_dirname + pathname_part)
+           
+            except OSError as exc:
+                if hasattr(exc, 'winerror'):
+                    if exc.winerror == ERROR_INVALID_NAME:
+                        return False
+                elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
+                    return False
+    except TypeError as exc:
+        return False
+    else:
+        return True
 
 def write_to_projects(projects: [dict]):
     absPath = os.path.dirname(os.path.abspath(__file__))
@@ -55,39 +136,44 @@ def write_to_projects(projects: [dict]):
         json.dump(projects, outfile)
 
 
-def start(selected: dict):
+def removeProject(projects: [dict], selected: dict):
+    return [i for i in projects if not (i['title'] == selected['title'])]
 
+
+def start(payload: dict):
+    options = payload["options"]
+    selected = payload["project"]
     title = selected["title"]
-    plat = platform.system()
-    global path
-    global editor
-    global fileSys
-    global openTerminal
+    plat = determinePlatform()
+    path = None
+    editor = None
+    fileSys = None
+    openTerminal = None
 
-    if plat == "Darwin":
-        # We are on MacOS
-        print("Using MacOS")
-        plat = "macOS"
-        path = selected["os"][plat]["path"]
+    if plat == "macOS":
+        if(is_pathname_valid(selected["os"][plat]["path"])):
+            path = selected["os"][plat]["path"]
+        else:
+            sys.exit("Invalid path provided")
         editor = selected["os"][plat]["editor-cmd"]
         fileSys = "finder"
         openTerminal = "open {}".format(path)
-    elif plat == "Windows":
-        # We are on Windows
-        print("Using Windows")
-        plat = "windows"
-        path = selected["os"][plat]["path"]
+    elif plat == "windows":
+        if(is_pathname_valid(selected["os"][plat]["path"])):
+            path = selected["os"][plat]["path"]
+        else:
+            sys.exit("Invalid path provided")
         editor = selected["os"]["windows"]["editor-cmd"]
         fileSys = "explorer"
         openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
-    elif plat == "Linux":
+    elif plat == "linux":
         # We are on Linux
-        print("Using Linux")
-        plat = "linux"
+        sys.exit("Linux is not supported yet")
     else:
         sys.exit("Unknown OS, please report. 0-0")
 
-    print("Loading {}\nFrom: $> {}\n".format(title, path))
+    print("Loading {}\nFrom: $> {}\n".format(
+        title, path))
 
     # Open Editor
     subprocess.Popen("code {}".format(path), shell=True,
@@ -109,9 +195,6 @@ def start(selected: dict):
     elif plat == "windows":
         # We are on Windows
         for cmd in cmds:
-            # subprocess.Popen(args='{}'.format(cmd), cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # subprocess.Popen(args='dir', cwd=path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # os.system('cmd /k "cd {} && {}"'.format(path, cmd))
             driveLetter = path[:2]
             os.system(
                 'start cmd.exe /k "{} && cd {} && {}"'.format(path[:2], path, cmd))
@@ -124,6 +207,9 @@ def start(selected: dict):
 
     if(selected == None):
         sys.exit("No project was selected. Exiting")
+
+    print("Project opened")
+    printArt("Happy Hacking")
 
 
 def add(payload: dict):
@@ -140,16 +226,27 @@ def rm(payload: dict):
     projects = payload["projects"]
     selected = payload["project"]
 
-    res = [i for i in projects if not (i['title'] == selected['title'])]
+    res = removeProject(projects=projects, selected=selected)
     write_to_projects(res)
 
 
-def config(selected: dict):
-    """ Configure a project in projects.json """
+def edit(payload: dict):
+    """ Edit a project in projects.json """
+
+    projects = payload["projects"]
+    selected = payload["project"]
+    field = payload["field"]
+    print("--")
+    newProject = edit_project(selected, field)
+
+    # Only remove after new details are recorded in case of user ending reconfig early.
+    res = removeProject(projects=projects, selected=selected)
+    projects.append(newProject)
+    write_to_projects(projects)
 
 
 def printArt(word: str):
     if(word == "Happy Hacking"):
-        happyHacking = ".  .            .  .      .         \n|__| _.._ ._   .|__| _. _.;_/*._  _ \n|  |(_][_)[_)\_||  |(_](_.| \|[ )(_]\n       |  |  ._|                 ._|\n"
+        happyHacking = "\u001B[32m.  .             .  .      .         \n|__| _.._ ._   . |__| _. _.;_/*._  _ \n|  |(_][_)[_)\_| |  |(_](_.| \|[ )(_]\n       |  |  ._|                  ._|\n\u001B[0m"
         print(happyHacking)
     # print("Project {}, has started. Happy Hacking".format(title))
