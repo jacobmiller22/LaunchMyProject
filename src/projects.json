@@ -41,49 +41,7 @@
     }
   },
   {
-    "title": "newProject",
-    "summary": "TBD",
-    "os": {
-      "windows": {
-        "path": "C:\\Users\\jacob\\Documents\\VTHacks\\Live-Site",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": ["npm start"], "bash-scripts": [] }
-      },
-      "macOS": {
-        "path": "/Users/jacobmiller/Documents/VTHacks/Live-Site",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": ["npm start"], "bash-scripts": [] }
-      },
-      "linux": {
-        "path": "",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
-      }
-    }
-  },
-  {
-    "title": "VTH-www",
-    "summary": "TBD",
-    "os": {
-      "windows": {
-        "path": "",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
-      },
-      "macOS": {
-        "path": "/Users/jacobmiller/Documents/VTHacks/www",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": ["npm run dev"], "bash-scripts": [] }
-      },
-      "linux": {
-        "path": "",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
-      }
-    }
-  },
-  {
-    "title": "Priyanka Messaging FrontEnd",
+    "title": "LL Frontend",
     "summary": "TBD",
     "os": {
       "windows": {
@@ -103,12 +61,6 @@
       }
     }
   },
-  { "title": "Space 1" },
-  { "title": "Space 2" },
-  { "title": "Space 3" },
-  { "title": "Space 4" },
-  { "title": "Space5" },
-  { "title": "Space 6" },
   {
     "title": "LiveSite",
     "summary": "VTHacks LiveSite",
@@ -138,7 +90,7 @@
     }
   },
   {
-    "title": "newProject",
+    "title": "LiveSite",
     "summary": "TBD",
     "os": {
       "windows": {
@@ -155,6 +107,20 @@
         "path": "",
         "editor-cmd": "code .",
         "scripts": { "cmds": [""], "bash-scripts": [] }
+      }
+    }
+  },
+  {
+    "title": "command-center",
+    "summary": "",
+    "os": {
+      "windows": {
+        "path": "C:\\Users\\jacob\\Documents\\Projects\\command-center",
+        "editor-cmd": "code .",
+        "scripts": {
+          "cmds": ["cd ./client && npm run dev", "cd ./server && npm start"],
+          "bash-scripts": []
+        }
       }
     }
   }

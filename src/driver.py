@@ -130,13 +130,13 @@ def is_pathname_valid(pathname: str) -> bool:
     else:
         return True
 
-def write_to_projects(projects: [dict]):
+def write_to_projects(projects: list):
     absPath = os.path.dirname(os.path.abspath(__file__))
     with open("{}/projects.json".format(absPath), "w") as outfile:
         json.dump(projects, outfile)
 
 
-def removeProject(projects: [dict], selected: dict):
+def removeProject(projects: list, selected: dict):
     return [i for i in projects if not (i['title'] == selected['title'])]
 
 

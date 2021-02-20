@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from json.decoder import JSONDecodeError
 import os
 import json
 import click
@@ -10,8 +11,22 @@ import driver
 
 # OPEN PROJECT DATA FILE
 absPath = os.path.dirname(os.path.abspath(__file__))
-with open("{}/projects.json".format(absPath)) as f:
-    projects = json.load(f)
+
+
+try:
+    with open("{}/projects.json".format(absPath), "x") as f:
+        json.dump([], f)
+except FileExistsError:
+    with open("{}/projects.json".format(absPath), "r+") as f:
+        try:
+            projects = json.load(f)
+        except JSONDecodeError:
+            json.dump([], f)
+            projects = []
+            pass
+        f.close()
+    pass
+    
 
 
 def selectProject(title: str):
@@ -30,7 +45,7 @@ def findProject(project_title):
         project_title = input('"{}" is not a known project. Enter a new project title.'.format(project_title))
     return project
 
-def create_project_struct(title: str, summary: str, os: str, path: str, editor_cmd: str, cmds: [str]):
+def create_project_struct(title: str, summary: str, os: str, path: str, editor_cmd: str, cmds: list):
     print("Creating Project")
 
 
@@ -57,6 +72,10 @@ def smp():
 @smp.command()
 def li(title: str, lim: str, show_all: str):
     """List projects, Prints all project if a limit is not defined."""
+
+    if(len(projects) == 0):
+        print("There are no created projects. Created projects are listed here.")
+
     p = 1
     SHOW_LIMIT = 10
     for i in range(len(projects)):
@@ -71,15 +90,22 @@ def li(title: str, lim: str, show_all: str):
         print(projects[i]["title"])
 
 
-@click.option('-Q', '--quit-Console', is_flag=True, help='Quits console after execution.')
+
+@click.option('-Q', '--quit-Console', is_flag=True, default=False, help='Process terminates shell after execution.')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='Provide more verbose detail about started project.')
 @ click.argument('project_title')
 @ smp.command()
-def start(project_title: str, quit_console: bool):
+def start(project_title: str, quit_console: bool, verbose: bool):
     """Start project [PROJECT_TITLE]"""
-    print("Starting {}".format(project_title))
+    
 
     project = findProject(project_title)
-        
+
+    print("Starting {}".format(project["title"]))
+
+    if(verbose):
+        print(project["summary"])
+
     args = {
         "action": "START",
         "payload": {
