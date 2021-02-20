@@ -11,7 +11,7 @@ import signal
 try:
     import applescript
 except ImportError:
-    """This exception is expected"""
+    """This exception is expected on non apple"""
 
 
 # temp = {
