@@ -5,12 +5,12 @@
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\Projects\\PortalApp",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": { "cmds": ["npm run dev"], "bash-scripts": [] }
       },
       "macOS": {
         "path": "/Users/jacobmiller/Documents/Projects/ClientPortalApp",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": {
           "cmds": ["cd ./server && npm run dev"],
           "bash-scripts": []
@@ -20,23 +20,18 @@
     }
   },
   {
-    "title": "StartMyProject",
+    "title": "smp",
     "summary": "TBD",
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\Projects\\StartMyProject",
         "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
+        "scripts": { "cmds": [], "bash-scripts": [] }
       },
       "macOS": {
         "path": "/Users/jacobmiller/Documents/Projects/StartMyProject",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
-      },
-      "linux": {
-        "path": "",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
+        "editor-cmd": "code",
+        "scripts": { "cmds": [], "bash-scripts": [] }
       }
     }
   },
@@ -45,19 +40,25 @@
     "summary": "TBD",
     "os": {
       "windows": {
-        "path": "C:\\Users\\jacob\\Documents\\Projects\\Priyanka\\merry-christmas",
-        "editor-cmd": "code .",
+        "path": "C:\\Users\\jacob\\Documents\\Projects\\lovely-letter-client",
+        "editor-cmd": "code",
+        "scripts": { "cmds": ["npm start"], "bash-scripts": [] }
+      }
+    }
+  },
+  {
+    "title": "LL Server",
+    "summary": "TBD",
+    "os": {
+      "windows": {
+        "path": "C:\\Users\\jacob\\Documents\\Projects\\lovely-letter-server",
+        "editor-cmd": "code",
         "scripts": { "cmds": ["npm start"], "bash-scripts": [] }
       },
       "macOS": {
         "path": "",
         "editor-cmd": "",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
-      },
-      "linux": {
-        "path": "",
-        "editor-cmd": "",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
+        "scripts": { "cmds": [], "bash-scripts": [] }
       }
     }
   },
@@ -67,7 +68,7 @@
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\VTHacks\\Live-Site",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": {
           "cmds": ["npm start", "start http://localhost:8000"],
           "bash-scripts": []
@@ -80,8 +81,8 @@
     "summary": "Jacob's Portfolio Website.",
     "os": {
       "windows": {
-        "path": "C:\\Users\\jacob\\Documents\\Projects\\WebsitePortfolio",
-        "editor-cmd": "code .",
+        "path": "C:\\Users\\jacob\\Documents\\Projects\\portfolio-website",
+        "editor-cmd": "code",
         "scripts": {
           "cmds": ["npm run dev", "start http://localhost:3000"],
           "bash-scripts": []
@@ -95,18 +96,13 @@
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\VTHacks\\Live-Site",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": { "cmds": ["npm start"], "bash-scripts": [] }
       },
       "macOS": {
         "path": "/Users/jacobmiller/Documents/VTHacks/Live-Site",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": { "cmds": ["npm start"], "bash-scripts": [] }
-      },
-      "linux": {
-        "path": "",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [""], "bash-scripts": [] }
       }
     }
   },
@@ -116,7 +112,7 @@
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\Projects\\command-center",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": {
           "cmds": ["cd ./client && npm run dev", "cd ./server && npm start"],
           "bash-scripts": []

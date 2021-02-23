@@ -61,6 +61,8 @@ def determinePlatform():
     else:
         sys.exit("Unknown OS, please report. 0-0")
 
+
+
 def create_commands():
     """Create commands"""
 
@@ -176,7 +178,7 @@ def start(payload: dict):
         title, path))
 
     # Open Editor
-    subprocess.Popen("code {}".format(path), shell=True,
+    subprocess.Popen("{} {}".format(editor, path), shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Open File System
@@ -240,7 +242,7 @@ def edit(payload: dict):
     newProject = edit_project(selected, field)
 
     # Only remove after new details are recorded in case of user ending reconfig early.
-    res = removeProject(projects=projects, selected=selected)
+    removeProject(projects=projects, selected=selected)
     projects.append(newProject)
     write_to_projects(projects)
 

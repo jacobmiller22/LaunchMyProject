@@ -3,6 +3,7 @@
 from json.decoder import JSONDecodeError
 import os
 import json
+# from src.driver import determinePlatform
 import click
 import subprocess
 import pathlib
@@ -59,6 +60,22 @@ def truthyQuestion(message: str):
         else:
             print("{} is not understood.".format(res))
 
+def printCMDDetails(cmds: list):
+    """Prints Commands """
+    if(len(cmds) > 0):
+        print("Runtime Commands:")
+        for i in range(len(cmds)):
+            print("{}. {}".format(i+1,cmds[i]))
+
+def printDetails(project: dict):
+    """Prints details about a project"""
+    print("Title:\n\t{}".format(project["title"]))
+    print("Summary:\n\t{}".format(project["summary"]))
+
+    plat = driver.determinePlatform()
+    print("Path:\n\t{}".format(project["os"][plat]["path"]))
+    print("IDE Keyword:\n\t{}".format(project["os"][plat]["editor-cmd"]))
+    printCMDDetails(project["os"][plat]["scripts"]["cmds"])
 
 @click.group()
 def smp():
@@ -66,11 +83,10 @@ def smp():
     pass
 
 
-@click.option('-t', '--title', help='Name of API (matches via substring - i.e. "at" would return "cat" and "atlas".')
 @click.option('-l', '--lim', default=None, help='Limit the number of projects that are listed')
 @click.option('-A', '--show-All', is_flag=True, help='Show all projects that are listed')
 @smp.command()
-def li(title: str, lim: str, show_all: str):
+def li(lim: str, show_all: str):
     """List projects, Prints all project if a limit is not defined."""
 
     if(len(projects) == 0):
@@ -88,6 +104,15 @@ def li(title: str, lim: str, show_all: str):
             if(not cont):
                 break
         print(projects[i]["title"])
+
+
+@ click.argument('project_title')
+@smp.command()
+def info(project_title: str):
+    """Display details about a project"""
+
+    project = findProject(project_title)
+    printDetails(project)
 
 
 
@@ -207,16 +232,19 @@ def rm(project_title: str):
 def edit(project_title: str):
     """ Goes through the process of editing a project in the project list """
 
+    
     project_to_edit = findProject(project_title)
+
+    printDetails(project_to_edit)
 
     FIELDS = ["title", "summary", "path", "editor-cmd", "cmds"]
 
-    field = input("Choose field to edit.\n{}\n".format(FIELDS)).lower()
+    field = input("Choose field to edit: ").lower()
 
     
 
     while (not (field in set(FIELDS))):
-        field = input('Invalid field "{}"'.format(field))
+        field = input('Invalid field "{}": '.format(field)).lower()
 
     args = {
         "action": "EDIT",
