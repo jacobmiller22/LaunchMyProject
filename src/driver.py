@@ -8,6 +8,8 @@ import subprocess
 import sys
 import platform
 import signal
+
+from click.decorators import option
 try:
     import applescript
 except ImportError:
@@ -174,12 +176,16 @@ def start(payload: dict):
     else:
         sys.exit("Unknown OS, please report. 0-0")
 
-    print("Loading {}\nFrom: $> {}\n".format(
+    limStr = "in limited mode"
+    print("Loading {} {}\nFrom: $> {}\n".format(limStr,
         title, path))
 
     # Open Editor
     subprocess.Popen("{} {}".format(editor, path), shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    if(options["limited"]):
+        sys.exit("")
 
     # Open File System
     subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
@@ -197,7 +203,6 @@ def start(payload: dict):
     elif plat == "windows":
         # We are on Windows
         for cmd in cmds:
-            driveLetter = path[:2]
             os.system(
                 'start cmd.exe /k "{} && cd {} && {}"'.format(path[:2], path, cmd))
 
@@ -210,8 +215,15 @@ def start(payload: dict):
     if(selected == None):
         sys.exit("No project was selected. Exiting")
 
+    if(option["quit"]):
+        if plat == "macOS":
+            os.system("exit")
+        elif plat == "windows":
+            os.system("exit")
+
     print("Project opened")
     printArt("Happy Hacking")
+
 
 
 def add(payload: dict):
