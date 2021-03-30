@@ -29,13 +29,13 @@ def select_project(title: str, project_list: list) -> dict:
     return None
 
 
-def find_project(project_title: str):
-    project = None
-    while True:
-        project = select_project(project_title)
-        if(project != None):
-            break
-        project_title = input('"{}" is not a known project. Enter a new project title.'.format(project_title))
+def find_project(project_title: str) -> dict or None:
+    
+    projects = open_projects()
+    
+    project = select_project(project_title, projects)
+    if(project == None):
+        return None
     return project
 
 def create_project_struct(title: str, summary: str, os: str, path: str, editor_cmd: str, cmds: list):

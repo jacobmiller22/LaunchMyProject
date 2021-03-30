@@ -215,7 +215,8 @@ def start(payload: dict):
     if(selected == None):
         sys.exit("No project was selected. Exiting")
 
-    if(option["quit"]):
+    
+    if(options["quit"] != None):
         if plat == "macOS":
             os.system("exit")
         elif plat == "windows":
@@ -226,37 +227,41 @@ def start(payload: dict):
 
 
 
-def add(payload: dict):
+def add(payload: dict) -> bool:
     """ Add a project to projects.json """
-    projects = payload["projects"]
-    new_project = payload["project"]
+    projects: list = payload["projects"]
+    new_project: dict = payload["project"]
     projects.append(new_project)
 
     write_to_projects(projects)
+    return True
 
 
-def rm(payload: dict):
+def rm(payload: dict) -> bool:
     """ Removed a project from projects.json """
     projects = payload["projects"]
     selected = payload["project"]
 
     res = removeProject(projects=projects, selected=selected)
     write_to_projects(res)
+    return True
 
 
-def edit(payload: dict):
+def edit(payload: dict) -> bool:
     """ Edit a project in projects.json """
 
     projects = payload["projects"]
     selected = payload["project"]
     field = payload["field"]
-    print("--")
+
     newProject = edit_project(selected, field)
 
     # Only remove after new details are recorded in case of user ending reconfig early.
     removeProject(projects=projects, selected=selected)
     projects.append(newProject)
     write_to_projects(projects)
+
+    return True
 
 
 def printArt(word: str):

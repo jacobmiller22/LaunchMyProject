@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
-
-import os
-import json
 # from src.driver import determinePlatform
+
 import click
-import subprocess
 
 import driver
 import projects
@@ -65,6 +62,9 @@ def start(project_title: str, quit_console: bool, verbose: bool, limited: bool):
 
     project = projects.find_project(project_title)
 
+    if project == None:
+        print('"{}" is not a known project. Try "lmp li" to see a list of prrojects'.format(project_title))
+        return
     print("Starting {}".format(project["title"]))
 
     if(verbose):
@@ -95,10 +95,27 @@ def config():
 def add():
     """ Goes through the process of adding a project to the project list """
 
+   
+
     print("Creating a new project.")
 
     # Create new project
-    title = input("Project title? ")
+    title: str = input("Project title? ")
+
+    # Check if project already exists
+    if projects.find_project(title) != None:
+        overwrite: bool = utils.truthy_question("A project named '{}' already exists. Would you like to replace it?".format(title))
+        if(not overwrite):
+            print("Project creation terminated by user.")
+            return
+        rmArgs = {
+            "action": "REMOVE",
+            "payload": {
+                "projects": projects.open_projects(),
+                "project": projects.find_project(title)
+            }
+        }
+
     summary = input("Project summary? ")
     os = driver.determinePlatform()
     path = input("Absolute path to project: ")
@@ -139,11 +156,13 @@ def add():
     args = {
         "action": "REMOVE",
         "payload": {
-            "projects": projects,
+            "projects": projects.open_projects(),
             "project": project_to_add
         }
     }
-    driver.add(driver.parseArg(args))
+    success: bool = driver.add(driver.parseArg(args))
+    if success:
+        print("'{}' created successfully".format(title))
 
 
 @ click.argument('project_title')
@@ -158,7 +177,7 @@ def rm(project_title: str):
     args = {
         "action": "REMOVE",
         "payload": {
-            "projects": projects,
+            "projects": projects.open_projects(),
             "project": project_to_remove
         }
     }
@@ -187,7 +206,7 @@ def edit(project_title: str):
     args = {
         "action": "EDIT",
         "payload": {
-            "projects": projects,
+            "projects": projects.open_projects(),
             "project": project_to_edit,
             "field": field,
         }
