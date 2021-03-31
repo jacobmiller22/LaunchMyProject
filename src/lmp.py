@@ -3,14 +3,16 @@
 # from src.driver import determinePlatform
 
 import click
-
+import os
 import driver
 import projects
 import utils
 
 # OPEN PROJECT DATA FILE
-projects_list: list = projects.open_projects()
 
+
+def get_project_titles(ctx, args, incomplete):
+    return ["'{}'".format((k["title"])) for k in projects.open_projects() if incomplete in k["title"]]
 
 @click.group()
 def lmp():
@@ -24,21 +26,21 @@ def lmp():
 def li(lim: str, show_all: str):
     """List projects, Prints all project if a limit is not defined."""
 
-    if(len(projects_list) == 0):
+    if(len(projects.open_projects()) == 0):
         print("There are no created projects. Created projects are listed here.")
 
     p = 1
     SHOW_LIMIT = 10
-    for i in range(len(projects_list)):
+    for i in range(len(projects.open_projects())):
         if(lim != None and i == int(lim)):
             break
         p = i
         if(p % SHOW_LIMIT == 0 and p != 0 and not show_all):
             cont = utils.truthy_question(
-                "Continue listing? {} more projects to display.".format(len(projects_list) - i))
+                "Continue listing? {} more projects to display.".format(len(projects.open_projects()) - i))
             if(not cont):
                 break
-        print(projects_list[i]["title"])
+        print(projects.open_projects()[i]["title"])
 
 
 @ click.argument('project_title')
@@ -54,11 +56,10 @@ def info(project_title: str):
 @click.option('-Q', '--quit-Console', is_flag=True, default=False, help='Process terminates shell after execution.')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='Provide more verbose detail about started project.')
 @click.option('-l', '--limited', is_flag=True, default=False, help='Launch only code editor.')
-@ click.argument('project_title')
-@ lmp.command()
+@click.argument('project_title', type=click.STRING, autocompletion=get_project_titles)
+@lmp.command()
 def start(project_title: str, quit_console: bool, verbose: bool, limited: bool):
     """Start project [PROJECT_TITLE]"""
-    
 
     project = projects.find_project(project_title)
 
@@ -69,7 +70,8 @@ def start(project_title: str, quit_console: bool, verbose: bool, limited: bool):
 
     if(verbose):
         print(project["summary"])
-
+# vimplug
+# 
     args = {
         "action": "START",
         "payload": {

@@ -172,7 +172,13 @@ def start(payload: dict):
         openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
     elif plat == "linux":
         # We are on Linux
-        sys.exit("Linux is not supported yet")
+        if(is_pathname_valid(selected["os"][plat]["path"])):
+            path = selected["os"][plat]["path"]
+        else:
+            sys.exit("Invalid path provided")
+        editor = selected["os"][plat]["editor-cmd"]
+        fileSys = "finder"
+        openTerminal = "open {}".format(path)
     else:
         sys.exit("Unknown OS, please report. 0-0")
 
