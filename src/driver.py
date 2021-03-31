@@ -171,7 +171,7 @@ def start(payload: dict):
         fileSys = "explorer"
         openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
     elif plat == "linux":
-        # We are on Linux
+        # We are on Linux- t
         if(is_pathname_valid(selected["os"][plat]["path"])):
             path = selected["os"][plat]["path"]
         else:
