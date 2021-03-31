@@ -193,7 +193,7 @@ def start(payload: dict):
     if(options["limited"]):
         sys.exit("")
 
-    # Open File System
+    # Open File System fds
     subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
