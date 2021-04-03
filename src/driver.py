@@ -204,7 +204,7 @@ def start(project: dict, projects, limited: bool, quit: bool):
     
     if(quit):
         if plat == "macOS":
-            os.system("exit") # Does not work
+            os.system("kill -9 $$") # Does not work
         else:
             os.system("exit")
 

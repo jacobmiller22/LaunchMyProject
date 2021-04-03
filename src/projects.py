@@ -8,20 +8,21 @@ absPath = os.path.dirname(os.path.abspath(__file__))
 
 
 def open_projects() -> list:
-  try:
-    with open("{}/projects.json".format(absPath), "x") as f:
-        json.dump([], f)
-  except FileExistsError:
-    with open("{}/projects.json".format(absPath), "r+") as f:
-        try:
-            projects = json.load(f)
-        except JSONDecodeError:
+    try:
+        with open("{}/projects.json".format(absPath), "x") as f:
             json.dump([], f)
-            projects = []
-            pass
-        f.close()
-    pass
-    return projects
+        
+    except FileExistsError:
+        with open("{}/projects.json".format(absPath), "r+") as f:
+            try:
+                projects = json.load(f)
+            except JSONDecodeError:
+                json.dump([], f)
+                projects = []
+                pass
+            f.close()
+        pass
+        return projects
 
 def select_project(title: str, project_list: list) -> dict:
     for project in project_list:
@@ -33,7 +34,10 @@ def select_project(title: str, project_list: list) -> dict:
 def find_project(project_title: str) -> dict or None:
     
     projects = open_projects()
-    
+    if(projects == None):
+        click.echo("No projects have been added. Use 'lmp config add <project_title>' to add a project")
+        return None
+
     project = select_project(project_title, projects)
     if(project == None):
         return None

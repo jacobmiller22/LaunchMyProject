@@ -4,7 +4,6 @@ setup.cfg
 setup.py
 src/driver.py
 src/lmp.py
-src/projects.json
 src/projects.py
 src/utils.py
 src/lmp.egg-info/PKG-INFO
