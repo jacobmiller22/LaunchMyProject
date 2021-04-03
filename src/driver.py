@@ -13,7 +13,6 @@ from DriverArgument import DriverArgument
 from click.decorators import option
 try:
     import applescript
-    import osascript
 except ImportError:
     """This exception is expected on non apple"""
 
