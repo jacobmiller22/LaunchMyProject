@@ -2,11 +2,12 @@ from json.decoder import JSONDecodeError
 import json
 import driver
 import os
+import click
 
 absPath = os.path.dirname(os.path.abspath(__file__))
 
 
-def open_projects():
+def open_projects() -> list:
   try:
     with open("{}/projects.json".format(absPath), "x") as f:
         json.dump([], f)
@@ -53,10 +54,10 @@ def print_cmd_details(cmds: list):
 
 def print_details(project: dict):
     """Prints details about a project"""
-    print("Title:\n\t{}".format(project["title"]))
-    print("Summary:\n\t{}".format(project["summary"]))
+    click.echo("Title:\n\t{}".format(project["title"]))
+    click.echo("Summary:\n\t{}".format(project["summary"]))
 
-    plat = driver.determinePlatform()
-    print("Path:\n\t{}".format(project["os"][plat]["path"]))
-    print("IDE Keyword:\n\t{}".format(project["os"][plat]["editor-cmd"]))
+    plat = driver.plat()
+    click.echo("Path:\n\t{}".format(project["os"][plat]["path"]))
+    click.echo("IDE Keyword:\n\t{}".format(project["os"][plat]["editor-cmd"]))
     print_cmd_details(project["os"][plat]["scripts"]["cmds"])

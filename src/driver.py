@@ -8,6 +8,7 @@ import subprocess
 import sys
 import platform
 import signal
+from DriverArgument import DriverArgument
 
 from click.decorators import option
 try:
@@ -16,43 +17,23 @@ except ImportError:
     """This exception is expected on non apple"""
 
 
-# temp = {
-#     "action": "ADD",
-#     "payload": {
-#         "project": {
-#             "title": "My project title",
-#             "summary": "tbd",
-#             "os": {
-#                 "windows": {
-#                     "path": "C:\\Users\\jacob\\Documents\\Projects\\StartMyProject",
-#                     "editor-cmd": "code .",
-#                     "scripts": {
-#                         "cmds": [""],
-#                         "bash-scripts": []
-#                     }
-#                 }
-#             }
-#         }
-#     }
-# }
+def parse(arg: DriverArgument) -> bool:
+    """Parses a DriverArgument object. Acts upon the DriverArgument action. 
+    Returns True if successful, false otherwise"""
 
-
-def parseArg(args: dict):
-
-    action = args["action"]
+    action = arg.get_action()
 
     if(action == "ADD"):
-        return args["payload"]
-    elif(action == "REMOVE"):
-        return args["payload"]
-    elif(action == "EDIT"):
-        return args["payload"]
-    elif(action == "START"):
-        return args["payload"]
+        return add(new_project=arg.pl_project, projects=arg.pl_projects)
+    if(action == "RM"):
+        return rm(project=arg.pl_project, projects=arg.pl_projects)
+    if(action == "EDIT"):
+        return edit(project=arg.pl_project, projects=arg.pl_projects, field=arg.pl_field)
+    if(action == "START"):
+        return start(project=arg.pl_project, projects=arg.pl_projects)
+    return False
 
-    print("Parsing arguments")
-
-def determinePlatform():
+def plat():
     plat = platform.system()
     if plat == "Darwin":
         return "macOS"
@@ -73,7 +54,7 @@ def __exit(message: str):
 
 def edit_project(project: dict, field: str):
     project_to_add = project
-    os = determinePlatform()
+    os = plat()
     
     if(project_to_add[field] != None):
         
@@ -140,7 +121,7 @@ def write_to_projects(projects: list):
         json.dump(projects, outfile)
 
 
-def removeProject(projects: list, selected: dict):
+def remove_project(projects: list, selected: dict):
     return [i for i in projects if not (i['title'] == selected['title'])]
 
 
@@ -148,7 +129,7 @@ def start(payload: dict):
     options = payload["options"]
     selected = payload["project"]
     title = selected["title"]
-    plat = determinePlatform()
+    plat = plat()
     path = None
     editor = None
     fileSys = None
@@ -182,9 +163,9 @@ def start(payload: dict):
     else:
         sys.exit("Unknown OS, please report. 0-0")
 
-    limStr = "in limited mode"
-    print("Loading {} {}\nFrom: $> {}\n".format(limStr,
-        title, path))
+    if(options["limited"]):
+        print("Launching in limited mode")
+    print("From: $> {}".format(path))
 
     # Open Editor
     subprocess.Popen("{} {}".format(editor, path), shell=True,
@@ -233,39 +214,30 @@ def start(payload: dict):
 
 
 
-def add(payload: dict) -> bool:
+def add(new_project: dict, projects: list) -> bool:
     """ Add a project to projects.json """
-    projects: list = payload["projects"]
-    new_project: dict = payload["project"]
     projects.append(new_project)
-
     write_to_projects(projects)
     return True
 
 
-def rm(payload: dict) -> bool:
+def rm(project: dict, projects: list) -> bool:
     """ Removed a project from projects.json """
-    projects = payload["projects"]
-    selected = payload["project"]
 
-    res = removeProject(projects=projects, selected=selected)
-    write_to_projects(res)
+    new_list = remove_project(projects=projects, selected=project)
+    write_to_projects(new_list)
     return True
 
 
-def edit(payload: dict) -> bool:
+def edit(project: dict, projects: list, field: str) -> bool:
     """ Edit a project in projects.json """
-
-    projects = payload["projects"]
-    selected = payload["project"]
-    field = payload["field"]
-
-    newProject = edit_project(selected, field)
+    newProject = edit_project(project=project, field=field)
 
     # Only remove after new details are recorded in case of user ending reconfig early.
-    removeProject(projects=projects, selected=selected)
-    projects.append(newProject)
-    write_to_projects(projects)
+    post_rm_list = remove_project(projects=projects, selected=project)
+
+    post_rm_list.append(newProject)
+    write_to_projects(post_rm_list)
 
     return True
 
