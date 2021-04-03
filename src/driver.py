@@ -13,6 +13,7 @@ from DriverArgument import DriverArgument
 from click.decorators import option
 try:
     import applescript
+    import osascript
 except ImportError:
     """This exception is expected on non apple"""
 
@@ -30,10 +31,10 @@ def parse(arg: DriverArgument) -> bool:
     if(action == "EDIT"):
         return edit(project=arg.pl_project, projects=arg.pl_projects, field=arg.pl_field)
     if(action == "START"):
-        return start(project=arg.pl_project, projects=arg.pl_projects)
+        return start(project=arg.pl_project, projects=arg.pl_projects, limited=arg.o_lim, quit=arg.o_quit)
     return False
 
-def plat():
+def get_plat():
     plat = platform.system()
     if plat == "Darwin":
         return "macOS"
@@ -54,7 +55,7 @@ def __exit(message: str):
 
 def edit_project(project: dict, field: str):
     project_to_add = project
-    os = plat()
+    os = get_plat()
     
     if(project_to_add[field] != None):
         
@@ -125,45 +126,44 @@ def remove_project(projects: list, selected: dict):
     return [i for i in projects if not (i['title'] == selected['title'])]
 
 
-def start(payload: dict):
-    options = payload["options"]
-    selected = payload["project"]
-    title = selected["title"]
-    plat = plat()
+def start(project: dict, projects, limited: bool, quit: bool):
+
+    plat = get_plat()
     path = None
     editor = None
     fileSys = None
     openTerminal = None
 
     if plat == "macOS":
-        if(is_pathname_valid(selected["os"][plat]["path"])):
-            path = selected["os"][plat]["path"]
+        if(is_pathname_valid(project["os"][plat]["path"])):
+            path = project["os"][plat]["path"]
         else:
             sys.exit("Invalid path provided")
-        editor = selected["os"][plat]["editor-cmd"]
+        editor = project["os"][plat]["editor-cmd"]
+        print(editor)
         fileSys = "finder"
         openTerminal = "open {}".format(path)
     elif plat == "windows":
-        if(is_pathname_valid(selected["os"][plat]["path"])):
-            path = selected["os"][plat]["path"]
+        if(is_pathname_valid(project["os"][plat]["path"])):
+            path = project["os"][plat]["path"]
         else:
             sys.exit("Invalid path provided")
-        editor = selected["os"]["windows"]["editor-cmd"]
+        editor = project["os"]["windows"]["editor-cmd"]
         fileSys = "explorer"
         openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
     elif plat == "linux":
         # We are on Linux
-        if(is_pathname_valid(selected["os"][plat]["path"])):
-            path = selected["os"][plat]["path"]
+        if(is_pathname_valid(project["os"][plat]["path"])):
+            path = project["os"][plat]["path"]
         else:
             sys.exit("Invalid path provided")
-        editor = selected["os"][plat]["editor-cmd"]
+        editor = project["os"][plat]["editor-cmd"]
         fileSys = "finder"
         openTerminal = "open {}".format(path)
     else:
         sys.exit("Unknown OS, please report. 0-0")
 
-    if(options["limited"]):
+    if(limited):
         print("Launching in limited mode")
     print("From: $> {}".format(path))
 
@@ -171,8 +171,8 @@ def start(payload: dict):
     subprocess.Popen("{} {}".format(editor, path), shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    if(options["limited"]):
-        sys.exit("")
+    if(limited):
+        sys.exit("Done in limited mode")
 
     # Open File System fds
     subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
@@ -181,7 +181,7 @@ def start(payload: dict):
     # Open cmd/terminal
     os.system(openTerminal)
     # Execute any scripts
-    cmds = selected["os"][plat]["scripts"]["cmds"]
+    cmds = project["os"][plat]["scripts"]["cmds"]
     if plat == "macOS":
         # We are on MacOS
         for cmd in cmds:
@@ -199,14 +199,14 @@ def start(payload: dict):
     else:
         sys.exit("Unknown OS, please report. 0-1")
 
-    if(selected == None):
+    if(project == None):
         sys.exit("No project was selected. Exiting")
 
     
-    if(options["quit"] != None):
+    if(quit):
         if plat == "macOS":
-            os.system("exit")
-        elif plat == "windows":
+            os.system("exit") # Does not work
+        else:
             os.system("exit")
 
     print("Project opened")

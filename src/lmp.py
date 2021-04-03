@@ -43,13 +43,14 @@ def info(project_title: str):
         click.echo("Unable to find a project of the name '{}'.".format(project_title))
 
 
-@click.option('-Q', is_flag=True, default=False, help='Process terminates shell after execution.')
-@click.option('-v', is_flag=True, default=False, help='Provide more verbose detail about started project.')
-@click.option('-l', is_flag=True, default=False, help='Launch only code editor.')
+@click.option('-Q', '--quit_console', is_flag=True, default=False, help='Process terminates shell after execution.')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='Provide more verbose detail about started project.')
+@click.option('-l', '--limited', is_flag=True, default=False, help='Launch only code editor.')
 @click.argument('project_title', type=click.STRING, autocompletion=get_project_titles)
 @lmp.command()
 def start(project_title: str, quit_console: bool, verbose: bool, limited: bool):
     """Start project <PROJECT_TITLE>"""
+    print("STARTING")
     project = projects.find_project(project_title)
     if project == None:
         click.echo(message='"{}" is not a known project. Try "lmp li" to see a list of prrojects'.format(project_title))
@@ -94,7 +95,7 @@ def add():
       
 
     summary = click.prompt(text="Project summary? ")
-    os = driver.plat()
+    os = driver.get_plat()
     path = click.prompt(text="Absolute path to project: ")
 
     if(not driver.is_pathname_valid(path)):
@@ -102,7 +103,7 @@ def add():
             driver.__exit("Process terminated.")
 
     editor_cmd: str = click.prompt(
-        text='Command to open editor (use "code ." to open vscode): ')
+        text='Command to open editor (use "code" to open vscode): ')
 
     CMDS: bool = click.confirm(
         "Would you like to add any run time commands?")

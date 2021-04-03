@@ -57,7 +57,7 @@ def print_details(project: dict):
     click.echo("Title:\n\t{}".format(project["title"]))
     click.echo("Summary:\n\t{}".format(project["summary"]))
 
-    plat = driver.plat()
+    plat = driver.get_plat()
     click.echo("Path:\n\t{}".format(project["os"][plat]["path"]))
     click.echo("IDE Keyword:\n\t{}".format(project["os"][plat]["editor-cmd"]))
     print_cmd_details(project["os"][plat]["scripts"]["cmds"])

@@ -1,16 +1,5 @@
 [
   {
-    "title": "lmp",
-    "summary": "TBD",
-    "os": {
-      "windows": {
-        "path": "C:\\Users\\jacob\\Documents\\Projects\\StartMyProject",
-        "editor-cmd": "code .",
-        "scripts": { "cmds": [], "bash-scripts": [] }
-      }
-    }
-  },
-  {
     "title": "LL Frontend",
     "summary": "TBD",
     "os": {
@@ -76,7 +65,7 @@
     "os": {
       "windows": {
         "path": "C:\\Users\\jacob\\Documents\\VTHacks\\Live-Site",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": {
           "cmds": ["npm start", "start http://localhost:8000"],
           "bash-scripts": []
@@ -84,11 +73,22 @@
       },
       "macOS": {
         "path": "~/Projects/Python/StartMyProject",
-        "editor-cmd": "code .",
+        "editor-cmd": "code",
         "scripts": {
           "cmds": ["npm start", "start http://localhost:8000"],
           "bash-scripts": []
         }
+      }
+    }
+  },
+  {
+    "title": "lmp",
+    "summary": "LaunchMyProject",
+    "os": {
+      "macOS": {
+        "path": "~/Projects/Python/StartMyProject",
+        "editor-cmd": "code",
+        "scripts": { "cmds": [], "bash-scripts": [] }
       }
     }
   }
