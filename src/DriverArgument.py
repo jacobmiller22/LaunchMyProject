@@ -12,33 +12,17 @@ class DriverArgument:
     self.o_lim: bool = None
     self.o_quit: bool = None
 
-     
-
-  def parse():
-    """"""
-
-  def get_payload():
-    """ Returns a proper Payload dictionary """
-
-  def set_payload():
-    """ Creates a proper Payload dictionary """
-
-  def get_options():
-    """ Returns a proper Options dictionary """
-
-  def set_options():
-    """ Creates a proper Options dictionary """
 
   def get_action(self) -> str:
     """ Returns the action this DriverArgument holds """
     return self.action
 
   def get_project(self) -> dict:
-    """"""
+    """ Returns the project this DriverArgument holds """
     return self.pl_project
 
   def get_projects(self) -> dict:
-    """"""
+    """ Returns the projects this DriverArgument holds """
     return self.pl_projects
 
   def make_start(self, project: dict, limited: bool, quit: bool):

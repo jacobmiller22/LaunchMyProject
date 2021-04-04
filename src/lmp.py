@@ -82,24 +82,21 @@ def add():
 
     # Check if project already exists
     if projects.find_project(title) != None:
-        overwrite: bool = utils.truthy_question("A project named '{}' already exists. Would you like to replace it?".format(title))
+        overwrite: bool = click.confirm("A project named '{}' already exists. Would you like to replace it?".format(title))
         if(not overwrite):
             click.echo("Project creation terminated by user.")
             return
         rmArg = DriverArgument()
-
         project_rm = projects.find_project(title)
-
         rmArg.make_rm(project=project_rm, projects=projects.open_projects())
         driver.parse(rmArg)
       
-
     summary = click.prompt(text="Project summary? ")
     os = driver.get_plat()
-    path = click.prompt(text="Absolute path to project: ")
+    path = click.prompt(text="Absolute path to project: ", type=click.Path(dir_okay=True))
 
     if(not driver.is_pathname_valid(path)):
-        if(not utils.truthy_question("Provided path is invalid, continue anyway? (y/n)")):
+        if(not click.confirm("Provided path is invalid, continue anyway?")):
             driver.__exit("Process terminated.")
 
     editor_cmd: str = click.prompt(
