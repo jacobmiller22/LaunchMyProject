@@ -82,10 +82,8 @@ def add():
 
     # Check if project already exists
     if projects.find_project(title) != None:
-        overwrite: bool = click.confirm("A project named '{}' already exists. Would you like to replace it?".format(title))
-        if(not overwrite):
-            click.echo("Project creation terminated by user.")
-            return
+        if not click.confirm("A project named '{}' already exists. Would you like to replace it?".format(title)):
+            utils.__exit("Project creation terminated by user.")
         rmArg = DriverArgument()
         project_rm = projects.find_project(title)
         rmArg.make_rm(project=project_rm, projects=projects.open_projects())
@@ -97,10 +95,12 @@ def add():
 
     if(not driver.is_pathname_valid(path)):
         if(not click.confirm("Provided path is invalid, continue anyway?")):
-            driver.__exit("Process terminated.")
+            driver.__exit("Project creation terminated by user.")
 
-    editor_cmd: str = click.prompt(
-        text='Command to open editor (use "code" to open vscode): ')
+    editor_cmd: str = click.prompt(text='Command to open editor: ')
+    file_sys_cmd: str = click.prompt(text="File system command: ", default=projects.get_default_file_sys(os), prompt_suffix="Leave blank for default.")
+    terminal_cmd: str = click.prompt(text="Terminal command: ", default=projects.get_default_terminal(os), prompt_suffix="Leave blank for default.")
+    terminal_exit_cmd: str = click.prompt(text="Terminal exit command: ", default=projects.get_default_terminal_exit(os), prompt_suffix="Leave blank for default.")
 
     CMDS: bool = click.confirm(
         "Would you like to add any run time commands?")
@@ -123,9 +123,11 @@ def add():
                 "scripts": {
                     "cmds": cmds,
                     "bash-scripts": []
-                }
+                },
+                "file-sys-cmd": file_sys_cmd,
+                "terminal-cmd": terminal_cmd,
+                "terminal-exit-cmd": terminal_exit_cmd,
             }
-
         }
     }
 

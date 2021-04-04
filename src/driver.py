@@ -2,15 +2,15 @@
 
 
 import os
-import errno
+
 import json
 import subprocess
 import sys
-import platform
-import signal
-from DriverArgument import DriverArgument
 
-from click.decorators import option
+
+from DriverArgument import DriverArgument
+import utils
+
 try:
     import applescript
 except ImportError:
@@ -33,28 +33,18 @@ def parse(arg: DriverArgument) -> bool:
         return start(project=arg.pl_project, projects=arg.pl_projects, limited=arg.o_lim, quit=arg.o_quit)
     return False
 
-def get_plat():
-    plat = platform.system()
-    if plat == "Darwin":
-        return "macOS"
-    elif plat == "Windows":
-        return "windows"
-    elif plat == "Linux":
-        return "linux"
-    else:
-        sys.exit("Unknown OS, please report. 0-0")
+
 
 
 
 def create_commands():
     """Create commands"""
 
-def __exit(message: str):
-    sys.exit(message)
+
 
 def edit_project(project: dict, field: str):
     project_to_add = project
-    os = get_plat()
+    os = utils.get_plat()
     
     if(project_to_add[field] != None):
         
@@ -82,38 +72,12 @@ def edit_project(project: dict, field: str):
                     newVal = input("Enter new cmd")
                     project_to_add["os"][os]["scripts"]["cmds"] = newVal
                 else:
-                    __exit("Invalid field")
+                    utils.__exit("Invalid field")
 
     return project_to_add
 
    
-def is_pathname_valid(pathname: str) -> bool:
-    ERROR_INVALID_NAME = 123
-    try:
-        if not isinstance(pathname, str) or not pathname:
-            return False
-        _, pathname = os.path.splitdrive(pathname)
 
-        root_dirname = os.environ.get('HOMEDRIVE', 'C:') \
-            if sys.platform == 'win32' else os.path.sep
-        assert os.path.isdir(root_dirname)   # ...Murphy and her ironclad Law
-
-        root_dirname = root_dirname.rstrip(os.path.sep) + os.path.sep
-
-        for pathname_part in pathname.split(os.path.sep):
-            try:
-                os.lstat(root_dirname + pathname_part)
-           
-            except OSError as exc:
-                if hasattr(exc, 'winerror'):
-                    if exc.winerror == ERROR_INVALID_NAME:
-                        return False
-                elif exc.errno in {errno.ENAMETOOLONG, errno.ERANGE}:
-                    return False
-    except TypeError as exc:
-        return False
-    else:
-        return True
 
 def write_to_projects(projects: list):
     absPath = os.path.dirname(os.path.abspath(__file__))
@@ -127,86 +91,53 @@ def remove_project(projects: list, selected: dict):
 
 def start(project: dict, projects, limited: bool, quit: bool):
 
-    plat = get_plat()
-    path = None
-    editor = None
-    fileSys = None
-    openTerminal = None
+    plat = utils.get_plat()
+    path = project["os"][plat]["path"]
 
-    if plat == "macOS":
-        if(is_pathname_valid(project["os"][plat]["path"])):
-            path = project["os"][plat]["path"]
-        else:
-            sys.exit("Invalid path provided")
-        editor = project["os"][plat]["editor-cmd"]
-        print(editor)
-        fileSys = "finder"
-        openTerminal = "open {}".format(path)
-    elif plat == "windows":
-        if(is_pathname_valid(project["os"][plat]["path"])):
-            path = project["os"][plat]["path"]
-        else:
-            sys.exit("Invalid path provided")
-        editor = project["os"]["windows"]["editor-cmd"]
-        fileSys = "explorer"
-        openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
-    elif plat == "linux":
-        # We are on Linux
-        if(is_pathname_valid(project["os"][plat]["path"])):
-            path = project["os"][plat]["path"]
-        else:
-            sys.exit("Invalid path provided")
-        editor = project["os"][plat]["editor-cmd"]
-        fileSys = "finder"
-        openTerminal = "open {}".format(path)
-    else:
-        sys.exit("Unknown OS, please report. 0-0")
+    if not utils.is_pathname_valid(path):
+        utils.__exit("Invalid path provided")
+
+    editor_cmd = project["os"][plat]["editor-cmd"]
+    file_sys_cmd = project["os"][plat]["file-sys-cmd"]
+    terminal_cmd = project["os"][plat]["terminal-cmd"]
+    
+    #fileSys = "explorer"
+    #openTerminal = 'start cmd.exe /k "{} && cd {}"'.format(path[:2], path)
 
     if(limited):
         print("Launching in limited mode")
     print("From: $> {}".format(path))
 
     # Open Editor
-    subprocess.Popen("{} {}".format(editor, path), shell=True,
-                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    subprocess.Popen("{} {}".format(editor_cmd, path), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if(limited):
-        sys.exit("Done in limited mode")
+        utils.__exit("Done in limited mode")
 
-    # Open File System fds
-    subprocess.Popen('{} {}'.format(fileSys, path), shell=True,
+    # Open File System
+    subprocess.Popen('{} {}'.format(file_sys_cmd, path), shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Open cmd/terminal
-    os.system(openTerminal)
+    os.system(terminal_cmd)
+
     # Execute any scripts
     cmds = project["os"][plat]["scripts"]["cmds"]
-    if plat == "macOS":
-        # We are on MacOS
-        for cmd in cmds:
+    for cmd in cmds:
+        if plat == "macOS":
             script = "cd {} && {}".format(path, cmd)
             applescript.tell.app('Terminal', 'do script "' + script + '"')
-    elif plat == "windows":
-        # We are on Windows
-        for cmd in cmds:
-            os.system(
-                'start cmd.exe /k "{} && cd {} && {}"'.format(path[:2], path, cmd))
-
-    elif plat == "Linux":
-        # We are on Linux
-        print("Run commands on Linux not yet supported")
-    else:
-        sys.exit("Unknown OS, please report. 0-1")
-
-    if(project == None):
-        sys.exit("No project was selected. Exiting")
-
-    
-    if(quit):
-        if plat == "macOS":
-            os.system("kill -9 $$") # Does not work
+        elif plat == "windows": 
+            os.system('start cmd.exe /k "{} && cd {} && {}"'.format(path[:2], path, cmd))
+        elif plat == "Linux":
+            print("Run commands on Linux not yet supported")
         else:
-            os.system("exit")
+            utils.__exit("Unknown OS, please report. 0-1")
+
+    if(quit):
+        os.system(project["os"][plat]["terminal-exit-cmd"])
+
+
 
     print("Project opened")
     printArt("Happy Hacking")

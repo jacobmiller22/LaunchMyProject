@@ -1,1 +1,27 @@
-[{"title": "lmp", "summary": "LaunchMyProject", "os": {"macOS": {"path": "~/Projects/Python/StartMyProject", "editor-cmd": "code", "scripts": {"cmds": [], "bash-scripts": []}}}}, {"title": "test", "summary": "fsd", "os": {"macOS": {"path": "~/test", "editor-cmd": "code", "scripts": {"cmds": [], "bash-scripts": []}}}}]
+[
+  {
+    "title": "lmp",
+    "summary": "LaunchMyProject",
+    "os": {
+      "macOS": {
+        "path": "~/Projects/Python/StartMyProject",
+        "editor-cmd": "code",
+        "scripts": { "cmds": [], "bash-scripts": [] }
+      }
+    }
+  },
+  {
+    "title": "test",
+    "summary": "fsd",
+    "os": {
+      "macOS": {
+        "path": "~/test",
+        "editor-cmd": "code",
+        "scripts": { "cmds": [], "bash-scripts": [] },
+        "file-sys-cmd": "finder",
+        "terminal-cmd": "open",
+        "terminal-exit-cmd": "kill -9 $$"
+      }
+    }
+  }
+]

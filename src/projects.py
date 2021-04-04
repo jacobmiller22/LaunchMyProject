@@ -46,8 +46,14 @@ def find_project(project_title: str) -> dict or None:
 def create_project_struct(title: str, summary: str, os: str, path: str, editor_cmd: str, cmds: list):
     print("Creating Project")
 
+def get_default_file_sys(plat: str):
+    """ Returns the command for the default file system for the user's current platform """
 
+def get_default_terminal(plat: str):
+    """ Returns the command for the default terminal for the user's current platform """
 
+def get_default_terminal_exit(plat: str):
+    """ Returns the command for the exiting the default terminalvfor the user's current platform """
 
 def print_cmd_details(cmds: list):
     """Prints Commands """
