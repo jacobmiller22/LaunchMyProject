@@ -1,14 +1,14 @@
 <p align="center">
   <!-- <a href="https://vt-hacks-live-site.netlify.app/" target="_blank" >
-    <img alt="VTHacks" src="https://vt-hacks-live-site.netlify.app/LogoFinal.svg" width="180" />
+    <img alt="LaunchMyProject" src="" width="180" />
   </a> -->
 </p>
 <h1 align="center">
-  StartMyProject
+  LaunchMyProject
 </h1>
 StartMyProject is an open source tool that gives a quick way for developers to start their workspaces. This way, developers get to spend more time coding and less time starting up their development environments
 
-## How to use StartMyProject
+## How to use LaunchMyProject
 
 1. **Create a Shortcut/Alias to the `execute`file(optional)**
    Creating a desktop shortcut is the recommended way to start the application
